@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+*完整备份*.json
+*学习作答*.json
+*学习作答*.md

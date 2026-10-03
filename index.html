@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CTA 税法学习任务、答题与评测记录日历">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>CTA 税法学习日历</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231f5fbf'/%3E%3Cpath d='M17 19h30v29H17z' fill='white'/%3E%3Cpath d='M17 27h30M25 15v8M39 15v8' fill='none' stroke='%23172033' stroke-width='4'/%3E%3Cpath d='M25 34h6v6h-6zm10 0h6v6h-6z' fill='%23b45309'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#calendarGrid">跳到日历</a>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">2026 税务师 · 税法一 / 税法二</p>
+      <h1>学习日历</h1>
+    </div>
+    <div class="exam-countdown" aria-label="考试倒计时">
+      <span>考试日</span>
+      <strong id="countdownValue">计算中</strong>
+      <time datetime="2026-11-14">2026.11.14</time>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="calendar-panel" aria-labelledby="calendarHeading">
+      <div class="toolbar">
+        <div class="month-nav">
+          <button class="icon-button" id="previousMonth" type="button" aria-label="上一个月">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <h2 id="calendarHeading" tabindex="-1"></h2>
+          <button class="icon-button" id="nextMonth" type="button" aria-label="下一个月">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+          <button class="text-button" id="todayButton" type="button">今天</button>
+        </div>
+        <div class="file-actions" aria-label="学习档案操作">
+          <button class="secondary-button" id="exportBackup" type="button">导出完整备份</button>
+          <button class="secondary-button" id="importBackupButton" type="button">导入完整备份</button>
+          <input id="importBackupInput" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+
+      <div class="legend" aria-label="日期状态图例">
+        <span><i class="legend-mark history"></i>历史学习日</span>
+        <span><i class="legend-mark task"></i>已生成任务</span>
+        <span><i class="legend-mark pending"></i>待GPT评测</span>
+        <span><i class="legend-mark evaluated"></i>已导入评测</span>
+        <span><i class="legend-mark rest"></i>休息日</span>
+      </div>
+
+      <div class="weekday-row" aria-hidden="true">
+        <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid" role="grid" aria-labelledby="calendarHeading"></div>
+      <p class="calendar-note">未生成任务的日期保持空白。网页不会自动排课、顺延或生成未来任务。</p>
+    </section>
+  </main>
+
+  <dialog id="dayDialog" class="day-dialog" aria-labelledby="dayDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <p class="eyebrow" id="dayDialogMeta"></p>
+        <h2 id="dayDialogTitle"></h2>
+      </div>
+      <button class="icon-button" id="closeDialog" type="button" aria-label="关闭日期详情">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="dayDialogBody" class="dialog-body"></div>
+  </dialog>
+
+  <dialog id="mapDialog" class="map-dialog" aria-labelledby="mapDialogTitle">
+    <div class="map-dialog-header">
+      <div>
+        <p class="eyebrow">原版整页导图 · 标记当前知识点</p>
+        <h2 id="mapDialogTitle"></h2>
+      </div>
+      <button class="icon-button" id="closeMapDialog" type="button" aria-label="关闭放大的知识点导图">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="map-toolbar" aria-label="导图查看工具">
+      <div class="map-toolbar-group">
+        <button id="previousMapPage" class="secondary-button" type="button">上一页</button>
+        <span id="mapPageLabel" aria-live="polite"></span>
+        <button id="nextMapPage" class="secondary-button" type="button">下一页</button>
+      </div>
+      <div class="map-toolbar-group">
+        <button id="zoomOutMap" class="secondary-button" type="button" aria-label="缩小导图">－</button>
+        <span id="mapZoomLabel" aria-live="polite">整页</span>
+        <button id="zoomInMap" class="secondary-button" type="button" aria-label="放大导图">＋</button>
+        <button id="fitMap" class="secondary-button" type="button">适合整页</button>
+        <button id="locateMap" class="secondary-button" type="button">定位当前点</button>
+      </div>
+    </div>
+    <div id="mapDialogBody" class="map-dialog-body" tabindex="0" aria-label="原版思维导图画布，可拖动；聚焦后用方向键移动，用加减号缩放"></div>
+    <p class="map-dialog-help">蓝色框标出本知识点在原图中的位置；可拖动、滚轮缩放，键盘可用方向键和加减号。切换至其他页时标记隐藏。</p>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="data/history.js"></script>
+  <script src="data/task-manifest.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
